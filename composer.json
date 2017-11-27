@@ -1,0 +1,32 @@
+{
+	"name": "silverstripe/installer",
+	"description": "The SilverStripe Framework Installer",
+	"require": {
+		"php": ">=5.3.3",
+		"silverstripe/cms": "3.5.3",
+		"silverstripe/framework": "3.5.3",
+		"silverstripe/reports": "3.5.3",
+		"silverstripe/siteconfig": "3.5.3",
+		"silverstripe-themes/simple": "3.1.*",
+		"silverstripe/queuedjobs": "^2.9",
+		"colymba/gridfield-bulk-editing-tools": "^2.1",
+		"undefinedoffset/sortablegridfield": "^0.6.5",
+		"silverstripe/userforms": "^4.2",
+		"silverstripe/fulltextsearch-localsolr": "dev-master",
+		"silverstripe/segment-field": "^1.0",
+		"stevie-mayhew/trait-loader": "^1.0"
+	},
+	"require-dev": {
+		"phpunit/PHPUnit": "~3.7@stable"
+	},
+	"extra": {
+		"branch-alias": {
+			"3.x-dev": "3.5.x-dev"
+		}
+	},
+	"config": {
+		"process-timeout": 600
+	},
+	"prefer-stable": true,
+	"minimum-stability": "dev"
+}
