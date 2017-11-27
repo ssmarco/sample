@@ -1,0 +1,60 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  php_tests:
+    docker:
+      - image: drupalci/php-5.4.45-apache:dev
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_USER=root
+          - MYSQL_ROOT_PASSWORD=ubuntu
+          - MYSQL_DATABASE=circle_test
+          - MYSQL_HOST=127.0.0.1
+
+    working_directory: ~/var/www
+
+    steps:
+      - run: apt-get update && apt-get install --no-install-recommends -y libsqlite3-dev git ssh
+      - run: sudo composer self-update
+      - checkout
+      # Composer Cache + Installation
+      - restore_cache:
+          keys:
+            # - composer-v1-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            # - composer-v1-
+            - v1-composer-{{ checksum "composer.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-composer-
+      - run: composer install -n --prefer-dist --ignore-platform-reqs
+      - save_cache:
+          # key: composer-v1-{{ checksum "composer.json" }}
+          key: v1-composer-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+            - ~/.composer/cache
+
+      # Additional Dependancies
+      - run: |
+          cp .circleci/_ss_environment.php .
+          mkdir routewhitelistcache
+          chmod +x framework/sake
+          # Run dev/build to build initial database
+          framework/sake dev/build
+
+      # Run PHPUnit tests
+      - run: vendor/bin/phpunit -d memory_limit=512M mysite/tests
+workflows:
+  version: 2
+  build:
+    jobs:
+      - php_tests:
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+                - /feature.*/
